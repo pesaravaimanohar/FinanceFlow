@@ -188,32 +188,32 @@ export default function BudgetPage() {
       {/* Combined Budget Summary Breakdown */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="card-sm bg-purple-950/20 border-purple-900/40">
-          <p className="text-purple-300 text-xs font-medium">1. Recurring Baseline (EMIs)</p>
-          <p className="text-purple-400 font-bold text-sm mt-0.5">{formatCurrency(activeEmiTotal, currency)}</p>
-          <p className="text-slate-500 text-[10px] mt-0.5">Auto-calculated from active loans/subs</p>
+          <p className="text-purple-300 text-xs font-semibold uppercase tracking-wider">1. Recurring Baseline</p>
+          <p className="text-purple-400 font-bold font-mono text-base mt-1">{formatCurrency(activeEmiTotal, currency)}</p>
+          <p className="text-slate-500 text-[10px] mt-0.5">Active EMIs & Subscriptions</p>
         </div>
 
         <div className="card-sm bg-indigo-950/20 border-indigo-900/40">
-          <p className="text-indigo-300 text-xs font-medium">2. Additional Discretionary</p>
-          <p className="text-indigo-400 font-bold text-sm mt-0.5">
+          <p className="text-indigo-300 text-xs font-semibold uppercase tracking-wider">2. Additional Budget</p>
+          <p className="text-indigo-400 font-bold font-mono text-base mt-1">
             {formatCurrency(Math.max(0, totalBudget - activeEmiTotal), currency)}
           </p>
-          <p className="text-slate-500 text-[10px] mt-0.5">User-added extra category budget</p>
+          <p className="text-slate-500 text-[10px] mt-0.5">Extra discretionary categories</p>
         </div>
 
         <div className="card-sm bg-slate-800/80 border-slate-700">
-          <p className="text-slate-300 text-xs font-medium">Total Combined Budget</p>
-          <p className="text-slate-100 font-bold text-sm mt-0.5">{formatCurrency(totalBudget, currency)}</p>
+          <p className="text-slate-300 text-xs font-semibold uppercase tracking-wider">Total Combined Budget</p>
+          <p className="text-slate-100 font-bold font-mono text-base mt-1">{formatCurrency(totalBudget, currency)}</p>
           <p className="text-slate-500 text-[10px] mt-0.5">Recurring + Additional combined</p>
         </div>
 
         <div className="card-sm bg-slate-800/80 border-slate-700">
-          <p className="text-slate-300 text-xs font-medium">Remaining Budget</p>
-          <p className={`font-bold text-sm mt-0.5 ${totalBudget - totalSpent < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+          <p className="text-slate-300 text-xs font-semibold uppercase tracking-wider">Remaining Buffer</p>
+          <p className={`font-bold font-mono text-base mt-1 ${totalBudget - totalSpent < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
             {formatCurrency(Math.abs(totalBudget - totalSpent), currency)}
-            {totalBudget - totalSpent < 0 && <span className="text-xs font-normal text-red-500 ml-1">over</span>}
+            {totalBudget - totalSpent < 0 && <span className="text-xs font-normal font-sans text-red-500 ml-1">over</span>}
           </p>
-          <p className="text-slate-500 text-[10px] mt-0.5">Total spent: {formatCurrency(totalSpent, currency)}</p>
+          <p className="text-slate-500 text-[10px] mt-0.5 font-mono">Spent: {formatCurrency(totalSpent, currency)}</p>
         </div>
       </div>
 

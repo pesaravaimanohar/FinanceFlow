@@ -57,10 +57,10 @@ export default function DashboardCards({ stats, profile }) {
           <div key={i} className={`card border ${card.wrapperClass} animate-fade-in`}>
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-slate-400 text-xs font-medium">{card.label}</p>
-                <p className={`text-lg lg:text-xl font-bold mt-1 ${card.valueColor}`}>
+                <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">{card.label}</p>
+                <p className={`text-lg lg:text-xl font-bold font-mono tracking-tight mt-1 ${card.valueColor}`}>
                   {card.prefix}{card.value}
-                  {card.sub && <span className="text-xs font-normal text-slate-500 ml-1">{card.sub}</span>}
+                  {card.sub && <span className="text-xs font-normal font-sans text-slate-500 ml-1">{card.sub}</span>}
                 </p>
               </div>
               <div className={`w-8 h-8 ${card.iconBg} rounded-lg flex items-center justify-center flex-shrink-0`}>

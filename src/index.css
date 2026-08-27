@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,6 +11,12 @@
     @apply bg-slate-950 text-slate-100 font-sans antialiased;
     scrollbar-width: thin;
     scrollbar-color: #334155 #0f172a;
+  }
+  h1, h2, h3, .font-headline {
+    font-family: 'Manrope', 'Inter', sans-serif;
+  }
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
   }
   ::-webkit-scrollbar {
     width: 6px;
@@ -29,10 +35,13 @@
 
 @layer components {
   .card {
-    @apply bg-slate-900 border border-slate-800 rounded-2xl p-5;
+    @apply bg-slate-900/90 backdrop-blur-md border border-slate-800/80 rounded-2xl p-5 shadow-xl shadow-slate-950/40 hover:border-slate-700/80 transition-all duration-300;
   }
   .card-sm {
-    @apply bg-slate-900 border border-slate-800 rounded-xl p-4;
+    @apply bg-slate-900/80 backdrop-blur-sm border border-slate-800/70 rounded-xl p-4 shadow-md;
+  }
+  .bento-card {
+    @apply bg-slate-900/90 border border-slate-800/90 rounded-2xl p-6 shadow-xl relative overflow-hidden;
   }
   .btn-primary {
     @apply bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2 rounded-xl 

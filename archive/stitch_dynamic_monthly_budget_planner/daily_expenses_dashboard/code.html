@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Equilibrium Finance - Daily Expenses</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ba1a1a",
+                        "primary": "#000000",
+                        "inverse-surface": "#2d3133",
+                        "secondary-container": "#2170e4",
+                        "on-background": "#191c1e",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-container-low": "#f2f4f6",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#fefcff",
+                        "surface-tint": "#565e74",
+                        "on-tertiary-container": "#75859d",
+                        "background": "#f7f9fb",
+                        "on-surface-variant": "#45464d",
+                        "tertiary-container": "#0b1c30",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary-fixed": "#001a42",
+                        "on-tertiary-fixed-variant": "#38485d",
+                        "tertiary-fixed-dim": "#b7c8e1",
+                        "secondary": "#0058be",
+                        "tertiary": "#000000",
+                        "on-surface": "#191c1e",
+                        "primary-container": "#131b2e",
+                        "primary-fixed-dim": "#bec6e0",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#d3e4fe",
+                        "surface-dim": "#d8dadc",
+                        "outline": "#76777d",
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "surface-variant": "#e0e3e5",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-primary-fixed": "#131b2e",
+                        "outline-variant": "#c6c6cd",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "on-primary-container": "#7c839b",
+                        "surface": "#f7f9fb",
+                        "inverse-primary": "#bec6e0",
+                        "surface-container": "#eceef0",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f7f9fb",
+                        "primary-fixed": "#dae2fd",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#0b1c30",
+                        "secondary-fixed-dim": "#adc6ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "xxl": "48px",
+                        "md": "16px",
+                        "xs": "8px",
+                        "base": "4px",
+                        "container-max": "1440px",
+                        "gutter": "24px",
+                        "xl": "32px",
+                        "sm": "12px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter"],
+                        "data-lg": ["JetBrains Mono"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "display-lg": ["Manrope"],
+                        "data-md": ["JetBrains Mono"],
+                        "headline-lg": ["Manrope"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "data-lg": ["20px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "data-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    },
+                    boxShadow: {
+                        'level-1': '0px 4px 20px rgba(15, 23, 42, 0.05)',
+                        'level-2': '0px 10px 30px rgba(15, 23, 42, 0.10)',
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7f9fb; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .icon-fill { font-variation-settings: 'FILL' 1; }
+        
+        /* Level 2 Modal Animation */
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.98) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-animate {
+            animation: modalFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+    </style>
+</head>
+<body class="text-on-background bg-background flex h-screen overflow-hidden antialiased">
+<!-- SideNavBar -->
+<nav class="h-screen w-64 fixed left-0 top-0 bg-surface-container-lowest border-r border-outline-variant shadow-sm z-20 hidden md:flex flex-col">
+<div class="flex flex-col h-full p-lg gap-md">
+<!-- Brand -->
+<div class="flex items-center gap-sm mb-lg px-xs">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined icon-fill">account_balance</span>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-primary tracking-tight leading-none">Equilibrium</h1>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Finance</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex flex-col gap-xs flex-1">
+<!-- Inactive -->
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out hover:translate-x-1 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-body-md text-body-md">Home</span>
+</a>
+<!-- Active (Index 1: Expenses) -->
+<a class="flex items-center gap-sm px-md py-sm bg-secondary-container text-on-secondary-container rounded-lg font-bold transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined icon-fill" data-icon="receipt_long">receipt_long</span>
+<span class="font-body-md text-body-md">Expenses</span>
+</a>
+<!-- Inactive -->
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out hover:translate-x-1 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+<span class="font-body-md text-body-md">Investments</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out hover:translate-x-1 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-body-md text-body-md">Budget</span>
+</a>
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out hover:translate-x-1 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Analysis</span>
+</a>
+</div>
+<!-- Bottom Section -->
+<div class="mt-auto flex flex-col gap-md">
+<a class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out hover:translate-x-1 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+<button class="w-full bg-primary text-on-primary py-sm px-md rounded-lg font-body-md text-body-md font-medium hover:bg-tertiary-container transition-colors flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    New Transaction
+                </button>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-64 flex flex-col h-screen relative">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-0 md:left-64 h-16 bg-surface z-10 flex justify-between items-center px-xl">
+<div class="flex items-center gap-md">
+<span class="text-headline-sm font-headline-sm font-semibold text-primary hidden md:block">Daily Expenses</span>
+</div>
+<div class="flex items-center gap-lg">
+<!-- Search -->
+<div class="relative hidden md:block w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 font-body-sm text-body-sm text-on-surface focus:ring-1 focus:ring-secondary transition-shadow" placeholder="Search expenses..." type="text"/>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant hover:text-secondary transition-colors cursor-pointer active:opacity-70 p-1">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-secondary transition-colors cursor-pointer active:opacity-70 p-1">
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden ml-2 border border-outline-variant">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhTm8KmbijuJrdjQRuFnKvxuLlfYNYFWn05hdhZLVp_yIVHIwUJvcyn8J82arku_IFXFqLZTDKrkoqLUmWQoWCf28Nx_8zpK9zcADGDPeelTwEKhgPRxEsPIfsfkhyV5J282gjpbqOdLm006_KqKVDcGZI7ihPKlzkGGo7bcfCgLJegPJJtTdy4evHloglXto9TGzz_Qopo8HwYJSxmkZV7tbA73cpOB0l4brDNkSMTUBb0UodxXEt"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="flex-1 overflow-y-auto pt-24 pb-xl px-4 md:px-xl w-full max-w-[1440px] mx-auto">
+<!-- Page Header & Primary Action -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-lg gap-4">
+<div>
+<h2 class="text-headline-lg font-headline-lg text-primary mb-1">Track &amp; Manage</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">Monitor your daily cash flow and categorized spending.</p>
+</div>
+<button class="bg-primary text-on-primary font-body-md text-body-md px-lg py-3 rounded-lg shadow-sm hover:shadow-md transition-all flex items-center gap-2 font-medium" id="openExpenseModalBtn">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+                    Add Daily Expense
+                </button>
+</div>
+<!-- Dashboard Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-xl">
+<!-- Metric Card 1 -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-level-1 border border-surface-container">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider block mb-2">Today's Total</span>
+<div class="flex items-baseline gap-2">
+<span class="font-data-lg text-display-lg text-primary">$124.50</span>
+<span class="font-body-sm text-body-sm text-error bg-error-container px-2 py-0.5 rounded font-medium flex items-center">
+<span class="material-symbols-outlined text-[14px] mr-1">arrow_upward</span> 12%
+                        </span>
+</div>
+</div>
+<!-- Metric Card 2 -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-level-1 border border-surface-container">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider block mb-2">This Week</span>
+<div class="flex items-baseline gap-2">
+<span class="font-data-lg text-display-lg text-primary">$840.20</span>
+<span class="font-body-sm text-body-sm text-secondary bg-secondary-fixed px-2 py-0.5 rounded font-medium flex items-center text-on-secondary-fixed-variant">
+<span class="material-symbols-outlined text-[14px] mr-1">arrow_downward</span> 4%
+                        </span>
+</div>
+</div>
+<!-- Metric Card 3 (Visual Placeholder) -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-level-1 border border-surface-container flex flex-col justify-between relative overflow-hidden">
+<div class="relative z-10">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider block mb-2">Highest Category</span>
+<span class="font-headline-sm text-headline-sm text-primary">Food &amp; Dining</span>
+</div>
+<!-- Decorative subtle background element -->
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+</div>
+</div>
+</div>
+<!-- Recent Expenses List -->
+<div class="bg-surface-container-lowest rounded-xl shadow-level-1 border border-surface-container overflow-hidden">
+<div class="p-lg border-b border-surface-container flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-primary">Recent Transactions</h3>
+<button class="font-body-sm text-body-sm text-secondary hover:text-secondary-container transition-colors font-medium">View All</button>
+</div>
+<div class="flex flex-col">
+<!-- Financial Row 1 -->
+<div class="flex items-center justify-between p-lg border-b border-surface-container hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">restaurant</span>
+</div>
+<div>
+<p class="font-body-md text-body-md font-medium text-primary">Sweetgreen Lunch</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Food • Today, 1:30 PM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-data-md text-data-lg text-primary">-$18.45</p>
+</div>
+</div>
+<!-- Financial Row 2 -->
+<div class="flex items-center justify-between p-lg border-b border-surface-container hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">directions_car</span>
+</div>
+<div>
+<p class="font-body-md text-body-md font-medium text-primary">Uber to Office</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Transport • Today, 8:45 AM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-data-md text-data-lg text-primary">-$24.00</p>
+</div>
+</div>
+<!-- Financial Row 3 -->
+<div class="flex items-center justify-between p-lg border-b border-surface-container hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">shopping_bag</span>
+</div>
+<div>
+<p class="font-body-md text-body-md font-medium text-primary">Office Supplies</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Shopping • Yesterday</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-data-md text-data-lg text-primary">-$45.20</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Modal Overlay -->
+<div class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" id="expenseModalOverlay">
+<!-- Modal Card (Level 2 Elevation) -->
+<div class="bg-surface-container-lowest w-full max-w-md rounded-xl shadow-level-2 border border-outline-variant overflow-hidden modal-animate">
+<div class="p-lg border-b border-surface-container flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-primary">Add Daily Expense</h3>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-container-low" id="closeModalBtn">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-lg space-y-md">
+<!-- Amount Field -->
+<div>
+<label class="font-label-caps text-label-caps text-on-surface-variant block mb-2 uppercase">Amount</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 font-data-lg text-on-surface-variant">$</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg py-3 pl-8 pr-4 font-data-lg text-primary focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all" placeholder="0.00" step="0.01" type="number"/>
+</div>
+</div>
+<!-- Category Dropdown -->
+<div>
+<label class="font-label-caps text-label-caps text-on-surface-variant block mb-2 uppercase">Category</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-lowest border border-outline-variant rounded-lg py-3 px-4 font-body-md text-primary focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all cursor-pointer" id="expenseCategory">
+<option disabled="" selected="" value="">Select a category</option>
+<option value="food">Food &amp; Dining</option>
+<option value="transport">Transportation</option>
+<option value="shopping">Shopping</option>
+<option value="other">Other...</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<!-- Custom Category Name (Conditional) -->
+<div class="hidden" id="customCategoryGroup">
+<label class="font-label-caps text-label-caps text-on-surface-variant block mb-2 uppercase">Custom Category Name</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg py-3 px-4 font-body-md text-primary focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all" placeholder="e.g., Subscriptions" type="text"/>
+</div>
+<!-- Optional Note -->
+<div>
+<label class="font-label-caps text-label-caps text-on-surface-variant block mb-2 uppercase">Note (Optional)</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg py-3 px-4 font-body-md text-primary focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all" placeholder="What was this for?" type="text"/>
+</div>
+</div>
+<div class="p-lg border-t border-surface-container bg-surface-container-low flex justify-end gap-sm">
+<!-- Secondary Button -->
+<button class="px-md py-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md font-medium text-primary hover:bg-surface-container transition-colors" id="cancelModalBtn">
+                    Cancel
+                </button>
+<!-- Primary Button -->
+<button class="px-md py-2 bg-primary text-on-primary rounded-lg font-body-md text-body-md font-medium shadow-sm hover:shadow-md transition-all">
+                    Save Expense
+                </button>
+</div>
+</div>
+</div>
+<script>
+        // Modal Logic
+        const modalOverlay = document.getElementById('expenseModalOverlay');
+        const openBtn = document.getElementById('openExpenseModalBtn');
+        const closeBtn = document.getElementById('closeModalBtn');
+        const cancelBtn = document.getElementById('cancelModalBtn');
+        const categorySelect = document.getElementById('expenseCategory');
+        const customCategoryGroup = document.getElementById('customCategoryGroup');
+
+        function openModal() {
+            modalOverlay.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            modalOverlay.classList.add('hidden');
+            // Reset form visually
+            categorySelect.value = "";
+            customCategoryGroup.classList.add('hidden');
+        }
+
+        openBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+
+        // Close on backdrop click
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+
+        // Category Selection Logic
+        categorySelect.addEventListener('change', function() {
+            if (this.value === 'other') {
+                customCategoryGroup.classList.remove('hidden');
+                // Optional: add a slight animation class here if desired
+            } else {
+                customCategoryGroup.classList.add('hidden');
+            }
+        });
+    </script>
+</body></html>

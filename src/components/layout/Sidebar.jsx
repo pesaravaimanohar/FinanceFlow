@@ -23,27 +23,27 @@ export default function Sidebar() {
   return (
     <aside className="hidden lg:flex flex-col w-64 h-screen bg-slate-900 border-r border-slate-800 fixed left-0 top-0 z-30">
       {/* Logo */}
-      <div className="p-5 border-b border-slate-800">
+      <div className="p-5 border-b border-slate-800/80">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-900/50">
+          <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-900/50 ring-2 ring-indigo-500/30">
             <Wallet className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="font-bold text-slate-100 text-sm leading-none">FinanceFlow</h1>
-            <p className="text-slate-500 text-xs mt-0.5">Personal Finance</p>
+            <h1 className="font-extrabold text-slate-100 text-sm leading-none tracking-tight">Equilibrium</h1>
+            <p className="text-indigo-400 text-[11px] font-semibold tracking-wider uppercase mt-0.5">Finance</p>
           </div>
         </div>
       </div>
 
       {/* Net Balance Card */}
-      <div className="mx-3 mt-4 p-3 bg-gradient-to-br from-indigo-900/50 to-purple-900/30 border border-indigo-800/40 rounded-xl">
-        <p className="text-slate-400 text-xs flex items-center gap-1">
-          <TrendingUp className="w-3 h-3" /> Net Savings
+      <div className="mx-3 mt-4 p-3.5 bg-gradient-to-br from-indigo-950/60 to-purple-950/30 border border-indigo-800/50 rounded-2xl shadow-md">
+        <p className="text-slate-400 text-[11px] font-semibold uppercase tracking-wider flex items-center gap-1">
+          <TrendingUp className="w-3 h-3 text-indigo-400" /> Net Savings
         </p>
-        <p className={`text-lg font-bold mt-0.5 ${stats.netSavings >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+        <p className={`text-lg font-bold font-mono tracking-tight mt-1 ${stats.netSavings >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
           {formatCurrency(Math.abs(stats.netSavings), currency)}
         </p>
-        <div className="flex justify-between mt-2 text-xs">
+        <div className="flex justify-between mt-2 text-xs font-mono">
           <span className="text-emerald-400">↑ {formatCurrency(stats.totalIncome, currency)}</span>
           <span className="text-red-400">↓ {formatCurrency(stats.totalExpenses, currency)}</span>
         </div>
