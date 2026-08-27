@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { format, parseISO, subMonths, addMonths } from 'date-fns'
 import {
   CreditCard, CheckCircle, Trash2, Pencil, ChevronDown, ChevronUp, Calendar, Repeat,
   Bike, Smartphone, Car, Home, Laptop, Tv, GraduationCap, HeartPulse, Film, CheckCircle2, Sparkles,
@@ -9,18 +10,18 @@ import { formatCurrency, getDaysUntilDue, formatDate } from '../../lib/utils'
 import ProgressBar from '../ui/ProgressBar'
 import toast from 'react-hot-toast'
 
-const getEmiIcon = (title = '', category = '', isSub = false) => {
+function EmiIcon({ title = '', category = '', isSub = false, className = "w-5 h-5" }) {
   const q = `${title} ${category}`.toLowerCase()
-  if (/\b(bike|motorcycle|scooter|two-wheeler|vespa|bullet)\b/.test(q)) return Bike
-  if (/\b(mobile|phone|smartphone|iphone|apple|samsung|pixel|redmi|oneplus)\b/.test(q)) return Smartphone
-  if (/\b(car|auto|vehicle|suv|sedan)\b/.test(q)) return Car
-  if (/\b(home|housing|house|rent|flat|apartment|mortgage)\b/.test(q)) return Home
-  if (/\b(laptop|pc|computer|mac|macbook|dell|lenovo|asus|hp)\b/.test(q)) return Laptop
-  if (/\b(tv|television|appliance|fridge|washer|ac)\b/.test(q)) return Tv
-  if (/\b(education|school|college|tuition|course)\b/.test(q)) return GraduationCap
-  if (/\b(health|medical|doctor|hospital|insurance)\b/.test(q)) return HeartPulse
-  if (isSub || /\b(netflix|prime|amazon|spotify|hotstar|youtube)\b/.test(q)) return Film
-  return CreditCard
+  if (/\b(bike|motorcycle|scooter|two-wheeler|vespa|bullet)\b/.test(q)) return <Bike className={className} />
+  if (/\b(mobile|phone|smartphone|iphone|apple|samsung|pixel|redmi|oneplus)\b/.test(q)) return <Smartphone className={className} />
+  if (/\b(car|auto|vehicle|suv|sedan)\b/.test(q)) return <Car className={className} />
+  if (/\b(home|housing|house|rent|flat|apartment|mortgage)\b/.test(q)) return <Home className={className} />
+  if (/\b(laptop|pc|computer|mac|macbook|dell|lenovo|asus|hp)\b/.test(q)) return <Laptop className={className} />
+  if (/\b(tv|television|appliance|fridge|washer|ac)\b/.test(q)) return <Tv className={className} />
+  if (/\b(education|school|college|tuition|course)\b/.test(q)) return <GraduationCap className={className} />
+  if (/\b(health|medical|doctor|hospital|insurance)\b/.test(q)) return <HeartPulse className={className} />
+  if (isSub || /\b(netflix|prime|amazon|spotify|hotstar|youtube)\b/.test(q)) return <Film className={className} />
+  return <CreditCard className={className} />
 }
 
 export default function EMICard({ emi, onEdit }) {
@@ -34,13 +35,10 @@ export default function EMICard({ emi, onEdit }) {
   
   const hasTenure = !isSub && emi.total_tenure_months > 0
   const paidPct = hasTenure ? Math.min(100, (emi.paid_tenure_months / emi.total_tenure_months) * 100) : 0
-  const remainingMonths = hasTenure ? Math.max(0, emi.total_tenure_months - emi.paid_tenure_months) : 0
   const totalAmount = hasTenure ? emi.monthly_amount * emi.total_tenure_months : 0
   const paidAmount = emi.monthly_amount * (emi.paid_tenure_months || 0)
   const remainingAmount = hasTenure ? totalAmount - paidAmount : 0
   const isCompleted = hasTenure && emi.paid_tenure_months >= emi.total_tenure_months
-
-  const IconComponent = getEmiIcon(emi.title, emi.category, isSub)
 
   // 4-Stage Progress Bar Colors
   const getProgressColor = () => {
@@ -74,6 +72,20 @@ export default function EMICard({ emi, onEdit }) {
     }
   }
 
+  // Smart date calculation for existing EMIs created before start_date/end_date fields existed
+  const createdDate = emi.created_at ? parseISO(emi.created_at) : new Date()
+  const effectiveStartDate = emi.start_date
+    ? formatDate(emi.start_date)
+    : formatDate(format(subMonths(createdDate, emi.paid_tenure_months || 0), 'yyyy-MM-dd'))
+
+  const effectiveEndDate = isSub
+    ? 'Indefinite (No End Date)'
+    : emi.end_date
+    ? formatDate(emi.end_date)
+    : (hasTenure
+      ? formatDate(format(addMonths(parseISO(emi.start_date || format(subMonths(createdDate, emi.paid_tenure_months || 0), 'yyyy-MM-dd')), emi.total_tenure_months), 'yyyy-MM-dd'))
+      : 'N/A')
+
   return (
     <div className={`card border transition-all duration-200 ${
       isCompleted
@@ -100,7 +112,7 @@ export default function EMICard({ emi, onEdit }) {
             ? 'bg-amber-500/20 text-amber-400'
             : 'bg-rose-500/20 text-rose-400'
         }`}>
-          {isCompleted ? <CheckCircle2 className="w-6 h-6 text-emerald-400 animate-pulse" /> : <IconComponent className="w-5 h-5" />}
+          {isCompleted ? <CheckCircle2 className="w-6 h-6 text-emerald-400 animate-pulse" /> : <EmiIcon title={emi.title} category={emi.category} isSub={isSub} />}
         </div>
 
         <div className="flex-1 min-w-0">
@@ -166,10 +178,8 @@ export default function EMICard({ emi, onEdit }) {
       {/* Prominent Dates Summary */}
       <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 flex-wrap gap-2">
         <div className="flex items-center gap-3">
-          {emi.start_date && (
-            <span>Start: <strong className="text-slate-200">{formatDate(emi.start_date)}</strong></span>
-          )}
-          <span>End: <strong className="text-slate-200">{isSub ? 'Indefinite' : (emi.end_date ? formatDate(emi.end_date) : 'N/A')}</strong></span>
+          <span>Start: <strong className="text-slate-200">{effectiveStartDate}</strong></span>
+          <span>End: <strong className="text-slate-200">{effectiveEndDate}</strong></span>
         </div>
 
         {emi.due_day && (
