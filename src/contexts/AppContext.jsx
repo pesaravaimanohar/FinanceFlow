@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from './AuthContext'
 import { formatMonthYear, getDateRangeFromFilter } from '../lib/utils'
@@ -274,11 +274,16 @@ export const AppProvider = ({ children }) => {
     }
   }, [user])
 
+  // Only re-fetch when filter changes AFTER initial mount
+  const isFirstFilterRender = useRef(true)
   useEffect(() => {
+    if (isFirstFilterRender.current) { isFirstFilterRender.current = false; return }
     if (user) fetchTransactions(dateFilter, customDateRange)
   }, [dateFilter, customDateRange])
 
+  const isFirstMonthRender = useRef(true)
   useEffect(() => {
+    if (isFirstMonthRender.current) { isFirstMonthRender.current = false; return }
     if (user) fetchBudgets(selectedMonth)
   }, [selectedMonth])
 
