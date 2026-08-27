@@ -1,10 +1,17 @@
-export default function ProgressBar({ value, max, colorClass, showLabel = true, height = 'h-2' }) {
+export default function ProgressBar({ value, max, colorClass, showLabel = true, height = 'h-2', mode = 'progress' }) {
   const pct = max > 0 ? Math.min((value / max) * 100, 100) : 0
   const getColor = () => {
     if (colorClass) return colorClass
-    if (pct >= 90) return 'bg-red-500'
-    if (pct >= 70) return 'bg-amber-500'
-    return 'bg-emerald-500'
+    if (mode === 'budget') {
+      if (pct >= 90) return 'bg-red-500'
+      if (pct >= 75) return 'bg-amber-500'
+      return 'bg-emerald-500'
+    }
+    // Default 'progress' mode for EMIs, tasks & loan payoff:
+    // When EMI is ending (e.g. 70-100% paid off), it shows GREEN!
+    if (pct >= 70) return 'bg-emerald-500'
+    if (pct >= 35) return 'bg-teal-500'
+    return 'bg-indigo-500'
   }
 
   return (

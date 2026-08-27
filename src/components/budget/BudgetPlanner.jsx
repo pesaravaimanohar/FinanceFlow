@@ -129,7 +129,7 @@ export default function BudgetPlanner({ transactions }) {
                     </div>
                   </div>
 
-                  <ProgressBar value={spent} max={budget.budget_limit} showLabel={false} height="h-1.5" />
+                  <ProgressBar value={spent} max={budget.budget_limit} showLabel={false} height="h-1.5" mode="budget" />
 
                   <div className="flex justify-between mt-1.5 text-xs">
                     <span className="text-slate-500">
