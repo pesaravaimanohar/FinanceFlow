@@ -15,6 +15,7 @@ const defaultForm = {
   payment_mode: 'UPI',
   notes: '',
   transaction_date: format(new Date(), 'yyyy-MM-dd'),
+  transaction_time: format(new Date(), 'HH:mm'),
   is_recurring: false,
 }
 
@@ -37,6 +38,7 @@ export default function ExpenseForm({ isOpen, onClose, editData = null, presetDa
         payment_mode: editData.payment_mode || 'UPI',
         notes: editData.notes || '',
         transaction_date: editData.transaction_date,
+        transaction_time: editData.transaction_time || format(new Date(), 'HH:mm'),
         is_recurring: editData.is_recurring || false,
       })
     } else if (presetData) {
@@ -232,27 +234,42 @@ export default function ExpenseForm({ isOpen, onClose, editData = null, presetDa
           <p className="text-slate-600 text-xs mt-1">Press Enter or comma to add a tag</p>
         </div>
 
-        {/* Date */}
-        <div>
-          <label className="label flex items-center gap-1"><Calendar className="w-3 h-3" /> Date</label>
-          <input
-            type="date"
-            value={form.transaction_date}
-            onChange={e => handleChange('transaction_date', e.target.value)}
-            className="input"
-            max={format(new Date(), 'yyyy-MM-dd')}
-          />
+        {/* Date + Time */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="label flex items-center gap-1"><Calendar className="w-3 h-3" /> Date *</label>
+            <input
+              type="date"
+              value={form.transaction_date}
+              onChange={e => handleChange('transaction_date', e.target.value)}
+              className="input text-sm"
+              max={format(new Date(), 'yyyy-MM-dd')}
+              required
+            />
+          </div>
+          <div>
+            <label className="label flex items-center gap-1">Time</label>
+            <input
+              type="time"
+              value={form.transaction_time || ''}
+              onChange={e => handleChange('transaction_time', e.target.value)}
+              className="input text-sm"
+            />
+          </div>
         </div>
 
-        {/* Notes */}
+        {/* Description / What you did */}
         <div>
-          <label className="label flex items-center gap-1"><FileText className="w-3 h-3" /> Notes (optional)</label>
-          <textarea
+          <label className="label flex items-center gap-1">
+            <FileText className="w-3 h-3" /> Description / What you spent on *
+          </label>
+          <input
+            type="text"
             value={form.notes}
             onChange={e => handleChange('notes', e.target.value)}
-            placeholder="Add a note..."
-            className="input resize-none"
-            rows={2}
+            placeholder="e.g. Dinner at Bistro, Petrol refill, Grocery shopping"
+            className="input text-sm"
+            required={form.type === 'expense'}
           />
         </div>
 

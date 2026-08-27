@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Pencil, Trash2, ChevronDown, ChevronUp, Tag, RefreshCw } from 'lucide-react'
+import { Pencil, Trash2, ChevronDown, ChevronUp, Tag, RefreshCw, Clock } from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { useAuth } from '../../contexts/AuthContext'
-import { formatCurrency, formatDate } from '../../lib/utils'
+import { formatCurrency, formatDate, formatTime } from '../../lib/utils'
 import { CATEGORY_COLORS } from '../../lib/constants'
 import toast from 'react-hot-toast'
 
@@ -46,9 +46,9 @@ export default function TransactionList({ transactions, onEdit, onTagClick, sele
       {Object.entries(grouped).map(([date, txns]) => (
         <div key={date}>
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs font-medium text-slate-500">{formatDate(date)}</span>
+            <span className="text-xs font-semibold text-slate-400">{formatDate(date)}</span>
             <div className="flex-1 h-px bg-slate-800" />
-            <span className="text-xs text-slate-600">
+            <span className="text-xs text-slate-500">
               {txns.filter(t => t.type === 'expense').reduce((s, t) => s + parseFloat(t.amount), 0) > 0
                 ? `-${formatCurrency(txns.filter(t => t.type === 'expense').reduce((s, t) => s + parseFloat(t.amount), 0), currency)}`
                 : ''}
@@ -59,6 +59,8 @@ export default function TransactionList({ transactions, onEdit, onTagClick, sele
             {txns.map(t => {
               const isExpanded = expandedId === t.id
               const catColor = CATEGORY_COLORS[t.category] || '#94a3b8'
+              const formattedTime = formatTime(t.transaction_time)
+
               return (
                 <div
                   key={t.id}
@@ -77,7 +79,7 @@ export default function TransactionList({ transactions, onEdit, onTagClick, sele
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-slate-200 text-sm font-medium truncate">
+                        <span className="text-slate-100 text-sm font-semibold truncate">
                           {t.notes || t.category}
                         </span>
                         {t.is_recurring && (
@@ -85,9 +87,14 @@ export default function TransactionList({ transactions, onEdit, onTagClick, sele
                         )}
                       </div>
                       <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                        <span className="text-xs text-slate-500">{t.category}</span>
+                        <span className="text-xs text-slate-400 font-medium">{t.category}</span>
+                        {formattedTime && (
+                          <span className="text-xs text-slate-500 flex items-center gap-0.5">
+                            · <Clock className="w-3 h-3 text-slate-500" /> {formattedTime}
+                          </span>
+                        )}
                         {t.payment_mode && (
-                          <span className="text-xs text-slate-600">· {t.payment_mode}</span>
+                          <span className="text-xs text-slate-500">· {t.payment_mode}</span>
                         )}
                         {(t.tags || []).slice(0, 3).map(tag => (
                           <button

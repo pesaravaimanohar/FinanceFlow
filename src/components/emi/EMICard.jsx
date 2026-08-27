@@ -1,10 +1,27 @@
 import { useState } from 'react'
-import { CreditCard, CheckCircle, Trash2, Pencil, ChevronDown, ChevronUp, Calendar, Repeat } from 'lucide-react'
+import {
+  CreditCard, CheckCircle, Trash2, Pencil, ChevronDown, ChevronUp, Calendar, Repeat,
+  Bike, Smartphone, Car, Home, Laptop, Tv, GraduationCap, HeartPulse, Film, CheckCircle2, Sparkles,
+} from 'lucide-react'
 import { useApp } from '../../contexts/AppContext'
 import { useAuth } from '../../contexts/AuthContext'
 import { formatCurrency, getDaysUntilDue, formatDate } from '../../lib/utils'
 import ProgressBar from '../ui/ProgressBar'
 import toast from 'react-hot-toast'
+
+const getEmiIcon = (title = '', category = '', isSub = false) => {
+  const q = `${title} ${category}`.toLowerCase()
+  if (/\b(bike|motorcycle|scooter|two-wheeler|vespa|bullet)\b/.test(q)) return Bike
+  if (/\b(mobile|phone|smartphone|iphone|apple|samsung|pixel|redmi|oneplus)\b/.test(q)) return Smartphone
+  if (/\b(car|auto|vehicle|suv|sedan)\b/.test(q)) return Car
+  if (/\b(home|housing|house|rent|flat|apartment|mortgage)\b/.test(q)) return Home
+  if (/\b(laptop|pc|computer|mac|macbook|dell|lenovo|asus|hp)\b/.test(q)) return Laptop
+  if (/\b(tv|television|appliance|fridge|washer|ac)\b/.test(q)) return Tv
+  if (/\b(education|school|college|tuition|course)\b/.test(q)) return GraduationCap
+  if (/\b(health|medical|doctor|hospital|insurance)\b/.test(q)) return HeartPulse
+  if (isSub || /\b(netflix|prime|amazon|spotify|hotstar|youtube)\b/.test(q)) return Film
+  return CreditCard
+}
 
 export default function EMICard({ emi, onEdit }) {
   const { markEmiPaid, deleteEmi } = useApp()
@@ -16,12 +33,23 @@ export default function EMICard({ emi, onEdit }) {
   const daysUntilDue = getDaysUntilDue(emi.due_day)
   
   const hasTenure = !isSub && emi.total_tenure_months > 0
-  const paidPct = hasTenure ? (emi.paid_tenure_months / emi.total_tenure_months) * 100 : 0
+  const paidPct = hasTenure ? Math.min(100, (emi.paid_tenure_months / emi.total_tenure_months) * 100) : 0
   const remainingMonths = hasTenure ? Math.max(0, emi.total_tenure_months - emi.paid_tenure_months) : 0
   const totalAmount = hasTenure ? emi.monthly_amount * emi.total_tenure_months : 0
   const paidAmount = emi.monthly_amount * (emi.paid_tenure_months || 0)
   const remainingAmount = hasTenure ? totalAmount - paidAmount : 0
   const isCompleted = hasTenure && emi.paid_tenure_months >= emi.total_tenure_months
+
+  const IconComponent = getEmiIcon(emi.title, emi.category, isSub)
+
+  // 4-Stage Progress Bar Colors
+  const getProgressColor = () => {
+    if (isCompleted || paidPct >= 100) return 'bg-emerald-500'
+    if (paidPct >= 75) return 'bg-lime-400'
+    if (paidPct >= 50) return 'bg-cyan-500'
+    if (paidPct >= 25) return 'bg-amber-500'
+    return 'bg-rose-500'
+  }
 
   const handlePay = async () => {
     if (isCompleted) return toast('This EMI is already complete! 🎉')
@@ -49,7 +77,7 @@ export default function EMICard({ emi, onEdit }) {
   return (
     <div className={`card border transition-all duration-200 ${
       isCompleted
-        ? 'border-emerald-800/40 bg-emerald-900/10'
+        ? 'border-emerald-500/60 bg-emerald-950/20 shadow-lg shadow-emerald-950/30'
         : !emi.is_active
         ? 'border-slate-700/50 opacity-60'
         : 'border-slate-800 hover:border-slate-700'
@@ -59,10 +87,20 @@ export default function EMICard({ emi, onEdit }) {
         className="flex items-start gap-3 cursor-pointer"
         onClick={() => setExpanded(e => !e)}
       >
-        <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
-          isSub ? 'bg-purple-500/20 text-purple-400' : (isCompleted ? 'bg-emerald-500/20 text-emerald-400' : 'bg-indigo-500/20 text-indigo-400')
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md ${
+          isCompleted
+            ? 'bg-emerald-500/20 text-emerald-400 ring-2 ring-emerald-500/40'
+            : isSub
+            ? 'bg-purple-500/20 text-purple-400'
+            : paidPct >= 75
+            ? 'bg-lime-500/20 text-lime-400'
+            : paidPct >= 50
+            ? 'bg-cyan-500/20 text-cyan-400'
+            : paidPct >= 25
+            ? 'bg-amber-500/20 text-amber-400'
+            : 'bg-rose-500/20 text-rose-400'
         }`}>
-          {isSub ? <Repeat className="w-5 h-5" /> : (isCompleted ? <CheckCircle className="w-5 h-5" /> : <CreditCard className="w-5 h-5" />)}
+          {isCompleted ? <CheckCircle2 className="w-6 h-6 text-emerald-400 animate-pulse" /> : <IconComponent className="w-5 h-5" />}
         </div>
 
         <div className="flex-1 min-w-0">
@@ -76,14 +114,14 @@ export default function EMICard({ emi, onEdit }) {
               {isSub ? 'Subscription' : 'EMI'}
             </span>
             {isCompleted && (
-              <span className="text-[10px] font-medium bg-emerald-900/40 text-emerald-400 border border-emerald-800/40 px-1.5 py-0.5 rounded-full">
-                Paid Off!
+              <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
+                <Sparkles className="w-3 h-3 text-emerald-400" /> Fully Paid Off!
               </span>
             )}
           </div>
-          <p className="text-slate-500 text-xs mt-0.5">
+          <p className="text-slate-400 text-xs mt-0.5">
             {emi.lender_or_source ? `${emi.lender_or_source} • ` : ''}
-            <span className="text-slate-400">{emi.category || (isSub ? 'Subscriptions' : 'EMI & Loans')}</span>
+            <span className="text-slate-300 font-medium">{emi.category || (isSub ? 'Subscriptions' : 'EMI & Loans')}</span>
           </p>
         </div>
 
@@ -99,18 +137,18 @@ export default function EMICard({ emi, onEdit }) {
         {hasTenure ? (
           <>
             <div className="flex justify-between text-xs mb-1.5">
-              <span className="text-slate-500">{emi.paid_tenure_months} of {emi.total_tenure_months} months paid</span>
-              <span className={`font-medium ${isCompleted ? 'text-emerald-400' : 'text-slate-400'}`}>
+              <span className="text-slate-400 font-medium">{emi.paid_tenure_months} of {emi.total_tenure_months} months paid</span>
+              <span className={`font-bold ${isCompleted ? 'text-emerald-400' : 'text-slate-300'}`}>
                 {paidPct.toFixed(0)}%
               </span>
             </div>
             <ProgressBar value={emi.paid_tenure_months} max={emi.total_tenure_months} showLabel={false} height="h-2.5"
-              colorClass={isCompleted ? 'bg-emerald-500' : undefined}
+              colorClass={getProgressColor()}
             />
-            <div className="flex justify-between mt-1.5 text-xs">
-              <span className="text-slate-500">Paid: {formatCurrency(paidAmount, currency)}</span>
+            <div className="flex justify-between items-center mt-2 text-xs">
+              <span className="text-slate-400">Paid: <strong className="text-slate-200">{formatCurrency(paidAmount, currency)}</strong></span>
               {!isCompleted && (
-                <span className="text-slate-500">Remaining: {formatCurrency(remainingAmount, currency)}</span>
+                <span className="text-slate-400">Remaining: <strong className="text-amber-400">{formatCurrency(remainingAmount, currency)}</strong></span>
               )}
             </div>
           </>
@@ -125,43 +163,46 @@ export default function EMICard({ emi, onEdit }) {
         )}
       </div>
 
+      {/* Prominent Dates Summary */}
+      <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 flex-wrap gap-2">
+        <div className="flex items-center gap-3">
+          {emi.start_date && (
+            <span>Start: <strong className="text-slate-200">{formatDate(emi.start_date)}</strong></span>
+          )}
+          <span>End: <strong className="text-slate-200">{isSub ? 'Indefinite' : (emi.end_date ? formatDate(emi.end_date) : 'N/A')}</strong></span>
+        </div>
+
+        {emi.due_day && (
+          <div className="flex items-center gap-1">
+            <Calendar className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Due Day {emi.due_day}</span>
+            {daysUntilDue !== null && (
+              <span className={`px-1.5 py-0.5 rounded-full font-medium text-[10px] ${
+                daysUntilDue <= 2 ? 'bg-red-900/40 text-red-400' :
+                daysUntilDue <= 7 ? 'bg-amber-900/40 text-amber-400' :
+                'text-slate-400'
+              }`}>
+                {daysUntilDue === 0 ? 'Today' : `in ${daysUntilDue}d`}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* Expanded Details */}
       {expanded && (
         <div className="mt-3 pt-3 border-t border-slate-800 space-y-2 animate-fade-in">
           <div className="grid grid-cols-2 gap-2 text-xs">
-            {emi.start_date && (
-              <div className="card-sm">
-                <p className="text-slate-500">Start Date</p>
-                <p className="text-slate-200 font-medium">{formatDate(emi.start_date)}</p>
-              </div>
-            )}
-            <div className="card-sm">
-              <p className="text-slate-500">End Date</p>
-              <p className="text-slate-200 font-medium">
-                {isSub ? 'Indefinite (No End Date)' : (emi.end_date ? formatDate(emi.end_date) : 'N/A')}
-              </p>
-            </div>
-            {emi.due_day && (
-              <div className="card-sm">
-                <p className="text-slate-500">Due Day</p>
-                <p className="text-slate-200 font-medium flex items-center gap-1">
-                  <Calendar className="w-3 h-3 text-indigo-400" /> Day {emi.due_day}
-                  {daysUntilDue !== null && (
-                    <span className={`ml-1 px-1.5 py-0.5 rounded-full ${
-                      daysUntilDue <= 2 ? 'bg-red-900/40 text-red-400' :
-                      daysUntilDue <= 7 ? 'bg-amber-900/40 text-amber-400' :
-                      'text-slate-500'
-                    }`}>
-                      {daysUntilDue === 0 ? 'Today' : `in ${daysUntilDue}d`}
-                    </span>
-                  )}
-                </p>
-              </div>
-            )}
             {!isSub && emi.interest_rate && (
               <div className="card-sm">
                 <p className="text-slate-500">Interest Rate</p>
                 <p className="text-slate-200 font-medium">{emi.interest_rate}%</p>
+              </div>
+            )}
+            {hasTenure && (
+              <div className="card-sm">
+                <p className="text-slate-500">Total Obligation</p>
+                <p className="text-slate-200 font-medium">{formatCurrency(totalAmount, currency)}</p>
               </div>
             )}
           </div>

@@ -22,6 +22,18 @@ export const formatDate = (date) => {
   }
 }
 
+export const formatTime = (timeStr) => {
+  if (!timeStr) return ''
+  try {
+    const [h, m] = timeStr.split(':')
+    const d = new Date()
+    d.setHours(parseInt(h, 10), parseInt(m, 10))
+    return format(d, 'hh:mm a')
+  } catch {
+    return timeStr
+  }
+}
+
 export const formatMonthYear = (date = new Date()) => {
   return format(date, 'yyyy-MM')
 }

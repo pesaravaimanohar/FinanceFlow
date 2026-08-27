@@ -185,28 +185,37 @@ export default function BudgetPage() {
         </button>
       </div>
 
-      {/* Budget vs Actual Summary */}
-      {totalBudget > 0 && (
-        <div className="grid grid-cols-3 gap-3">
-          <div className="card-sm text-center">
-            <p className="text-slate-500 text-xs">Total Budget Allocated</p>
-            <p className="text-indigo-400 font-bold text-sm mt-0.5">{formatCurrency(totalBudget, currency)}</p>
-          </div>
-          <div className="card-sm text-center">
-            <p className="text-slate-500 text-xs">Actual Spent</p>
-            <p className={`font-bold text-sm mt-0.5 ${totalSpent > totalBudget ? 'text-red-400' : 'text-slate-200'}`}>
-              {formatCurrency(totalSpent, currency)}
-            </p>
-          </div>
-          <div className="card-sm text-center">
-            <p className="text-slate-500 text-xs">Remaining Budget</p>
-            <p className={`font-bold text-sm mt-0.5 ${totalBudget - totalSpent < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-              {formatCurrency(Math.abs(totalBudget - totalSpent), currency)}
-              {totalBudget - totalSpent < 0 && <span className="text-xs font-normal text-red-500 ml-1">over</span>}
-            </p>
-          </div>
+      {/* Combined Budget Summary Breakdown */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="card-sm bg-purple-950/20 border-purple-900/40">
+          <p className="text-purple-300 text-xs font-medium">1. Recurring Baseline (EMIs)</p>
+          <p className="text-purple-400 font-bold text-sm mt-0.5">{formatCurrency(activeEmiTotal, currency)}</p>
+          <p className="text-slate-500 text-[10px] mt-0.5">Auto-calculated from active loans/subs</p>
         </div>
-      )}
+
+        <div className="card-sm bg-indigo-950/20 border-indigo-900/40">
+          <p className="text-indigo-300 text-xs font-medium">2. Additional Discretionary</p>
+          <p className="text-indigo-400 font-bold text-sm mt-0.5">
+            {formatCurrency(Math.max(0, totalBudget - activeEmiTotal), currency)}
+          </p>
+          <p className="text-slate-500 text-[10px] mt-0.5">User-added extra category budget</p>
+        </div>
+
+        <div className="card-sm bg-slate-800/80 border-slate-700">
+          <p className="text-slate-300 text-xs font-medium">Total Combined Budget</p>
+          <p className="text-slate-100 font-bold text-sm mt-0.5">{formatCurrency(totalBudget, currency)}</p>
+          <p className="text-slate-500 text-[10px] mt-0.5">Recurring + Additional combined</p>
+        </div>
+
+        <div className="card-sm bg-slate-800/80 border-slate-700">
+          <p className="text-slate-300 text-xs font-medium">Remaining Budget</p>
+          <p className={`font-bold text-sm mt-0.5 ${totalBudget - totalSpent < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+            {formatCurrency(Math.abs(totalBudget - totalSpent), currency)}
+            {totalBudget - totalSpent < 0 && <span className="text-xs font-normal text-red-500 ml-1">over</span>}
+          </p>
+          <p className="text-slate-500 text-[10px] mt-0.5">Total spent: {formatCurrency(totalSpent, currency)}</p>
+        </div>
+      </div>
 
       {/* Budget Planner */}
       <div className="card">
