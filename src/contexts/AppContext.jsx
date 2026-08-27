@@ -130,25 +130,26 @@ export const AppProvider = ({ children }) => {
     setEmis(prev => prev.filter(e => e.id !== id))
   }
 
-  const markEmiPaid = async (emi) => {
-    // Create transaction for EMI payment
+  const markEmiPaid = async (item) => {
+    const isSub = item.recurring_type === 'subscription'
+    // Create transaction for EMI/Subscription payment
     await addTransaction({
-      amount: emi.monthly_amount,
+      amount: item.monthly_amount,
       type: 'expense',
-      category: 'EMI & Loans',
-      tags: ['emi', emi.title.toLowerCase().replace(/\s+/g, '-')],
-      notes: `EMI payment: ${emi.title}`,
+      category: item.category || (isSub ? 'Subscriptions' : 'EMI & Loans'),
+      tags: [isSub ? 'subscription' : 'emi', item.title.toLowerCase().replace(/\s+/g, '-')],
+      notes: `${isSub ? 'Subscription' : 'EMI'} payment: ${item.title}`,
       payment_mode: 'Net Banking',
       transaction_date: new Date().toISOString().split('T')[0],
     })
     // Increment paid months
-    const newPaid = emi.paid_tenure_months + 1
-    const isCompleted = newPaid >= emi.total_tenure_months
-    await updateEmi(emi.id, {
+    const newPaid = (item.paid_tenure_months || 0) + 1
+    const isCompleted = !isSub && item.total_tenure_months && newPaid >= item.total_tenure_months
+    await updateEmi(item.id, {
       paid_tenure_months: newPaid,
-      is_active: !isCompleted,
+      is_active: isSub ? true : !isCompleted,
     })
-    toast.success(isCompleted ? `🎉 ${emi.title} fully paid off!` : `EMI payment recorded!`)
+    toast.success(isCompleted ? `🎉 ${item.title} fully paid off!` : `${isSub ? 'Subscription' : 'EMI'} payment recorded!`)
   }
 
   // ── Budgets ───────────────────────────────────────────────
@@ -164,6 +165,7 @@ export const AppProvider = ({ children }) => {
       if (error) throw error
       setBudgets(data || [])
     } catch (err) {
+      console.error(err)
       toast.error('Failed to load budgets')
     } finally {
       setLoadingBudgets(false)
@@ -225,6 +227,27 @@ export const AppProvider = ({ children }) => {
     if (insertError) throw insertError
     await fetchBudgets(selectedMonth)
     toast.success('Last month\'s budget copied!')
+  }
+
+  const autoIncludeRecurringInBudget = async () => {
+    if (!user) return
+    const activeRecurring = emis.filter(e => e.is_active)
+    if (!activeRecurring.length) throw new Error('No active recurring payments found')
+
+    const categorySums = {}
+    activeRecurring.forEach(e => {
+      const cat = e.category || (e.recurring_type === 'subscription' ? 'Subscriptions' : 'EMI & Loans')
+      categorySums[cat] = (categorySums[cat] || 0) + parseFloat(e.monthly_amount || 0)
+    })
+
+    for (const [cat, reqAmount] of Object.entries(categorySums)) {
+      const existing = budgets.find(b => b.category === cat)
+      const currentLimit = existing ? parseFloat(existing.budget_limit) : 0
+      const newLimit = Math.max(currentLimit, reqAmount)
+      await upsertBudget(cat, newLimit)
+    }
+
+    toast.success('Recurring payments baseline budgeted!')
   }
 
   // ── Presets ───────────────────────────────────────────────
@@ -304,7 +327,7 @@ export const AppProvider = ({ children }) => {
       addEmi, updateEmi, deleteEmi, markEmiPaid,
       fetchEmis,
       // Budget actions
-      upsertBudget, deleteBudget, cloneLastMonthBudget,
+      upsertBudget, deleteBudget, cloneLastMonthBudget, autoIncludeRecurringInBudget,
       fetchBudgets,
       // Preset actions
       addPreset, deletePreset, fetchPresets,

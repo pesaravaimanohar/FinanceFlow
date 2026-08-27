@@ -1,20 +1,22 @@
 import { useState, useMemo } from 'react'
-import { Plus, Download, Tag } from 'lucide-react'
+import { Plus, Download, Tag, FileSpreadsheet } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 import { useAuth } from '../contexts/AuthContext'
 import TransactionFilters from '../components/transactions/TransactionFilters'
 import TransactionList from '../components/transactions/TransactionList'
 import ExpenseForm from '../components/transactions/ExpenseForm'
 import QuickPresets from '../components/transactions/QuickPresets'
-import { exportToCSV, formatCurrency } from '../lib/utils'
+import { exportToCSV, exportToExcel, formatCurrency } from '../lib/utils'
+import toast from 'react-hot-toast'
 
 export default function TransactionsPage() {
   const {
-    transactions, loadingTransactions,
+    transactions, budgets, emis, loadingTransactions,
     dateFilter, setDateFilter,
     customDateRange, setCustomDateRange,
+    selectedMonth,
   } = useApp()
-  const { currency } = useAuth()
+  const { profile, currency } = useAuth()
 
   const [showForm, setShowForm] = useState(false)
   const [editData, setEditData] = useState(null)
@@ -23,6 +25,18 @@ export default function TransactionsPage() {
   const [selectedType, setSelectedType] = useState('all')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedTags, setSelectedTags] = useState([])
+
+  const handleExcelExport = () => {
+    exportToExcel({
+      transactions: filtered,
+      budgets,
+      emis,
+      profile,
+      selectedMonth,
+      currency,
+    })
+    toast.success('Excel report downloaded!')
+  }
 
   // All unique tags across transactions
   const allTags = useMemo(() => {
@@ -62,17 +76,29 @@ export default function TransactionsPage() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-100">Transactions</h1>
-          <p className="text-slate-500 text-sm mt-0.5">{filtered.length} transactions</p>
+          <p className="text-slate-500 text-sm mt-0.5">{filtered.length} transactions logged</p>
         </div>
-        <div className="flex gap-2">
-          <button onClick={() => exportToCSV(transactions, currency)} className="btn-secondary text-sm px-3 hidden sm:flex">
-            <Download className="w-4 h-4" />
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExcelExport}
+            className="btn-primary text-xs bg-emerald-600 hover:bg-emerald-500 border-emerald-500 text-white"
+            title="Download formatted Excel (.xlsx) workbook"
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Download Excel</span>
           </button>
-          <button onClick={() => { setEditData(null); setPresetData(null); setShowForm(true) }} className="btn-primary text-sm">
-            <Plus className="w-4 h-4" />
+          <button
+            onClick={() => exportToCSV(filtered, currency)}
+            className="btn-secondary text-xs px-2.5"
+            title="Export CSV"
+          >
+            <Download className="w-3.5 h-3.5" />
+          </button>
+          <button onClick={() => { setEditData(null); setPresetData(null); setShowForm(true) }} className="btn-primary text-xs">
+            <Plus className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Add</span>
           </button>
         </div>

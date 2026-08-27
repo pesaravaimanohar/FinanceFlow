@@ -93,7 +93,7 @@ CREATE INDEX IF NOT EXISTS idx_transactions_user_date
   ON public.transactions(user_id, transaction_date DESC);
 
 -- ============================================================
--- TABLE: emis
+-- TABLE: emis (Recurring Payments & Subscriptions)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS public.emis (
   id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -101,13 +101,24 @@ CREATE TABLE IF NOT EXISTS public.emis (
   title               TEXT NOT NULL,
   lender_or_source    TEXT,
   monthly_amount      NUMERIC(12,2) NOT NULL,
-  total_tenure_months INT NOT NULL,
+  total_tenure_months INT, -- Nullable for open-ended subscriptions like Netflix/Prime
   paid_tenure_months  INT DEFAULT 0,
   due_day             INT CHECK (due_day BETWEEN 1 AND 31),
   interest_rate       NUMERIC(5,2),
+  recurring_type      TEXT DEFAULT 'emi' CHECK (recurring_type IN ('emi', 'subscription')),
+  category            TEXT DEFAULT 'EMI & Loans',
+  start_date          DATE,
+  end_date            DATE, -- NULL for subscriptions (no end date)
   is_active           BOOLEAN DEFAULT TRUE,
   created_at          TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Migration query if table already exists in Supabase:
+-- ALTER TABLE public.emis ADD COLUMN IF NOT EXISTS recurring_type TEXT DEFAULT 'emi' CHECK (recurring_type IN ('emi', 'subscription'));
+-- ALTER TABLE public.emis ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'EMI & Loans';
+-- ALTER TABLE public.emis ADD COLUMN IF NOT EXISTS start_date DATE;
+-- ALTER TABLE public.emis ADD COLUMN IF NOT EXISTS end_date DATE;
+-- ALTER TABLE public.emis ALTER COLUMN total_tenure_months DROP NOT NULL;
 
 ALTER TABLE public.emis ENABLE ROW LEVEL SECURITY;
 
